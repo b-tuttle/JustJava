@@ -1,12 +1,14 @@
 package com.example.android.justjava;
 
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.text.NumberFormat;
 
@@ -15,7 +17,7 @@ import java.text.NumberFormat;
  */
 public class MainActivity extends AppCompatActivity {
 
-    int quantity = 0;
+    int quantity = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,7 +85,15 @@ public class MainActivity extends AppCompatActivity {
      * This method is called when the plus button is clicked.
      */
     public void increment(View view) {
-        quantity = quantity + 1;
+        if (quantity >= 100) {
+            Context context = getApplicationContext();
+            CharSequence text = "We don't have that much coffee!";
+            int duration = Toast.LENGTH_SHORT;
+            Toast.makeText(context, text, duration).show();
+            return;
+        } else {
+            quantity = quantity + 1;
+        }
         displayQuantity(quantity);
     }
 
@@ -91,7 +101,15 @@ public class MainActivity extends AppCompatActivity {
      * This method is called when the minus button is clicked.
      */
     public void decrement(View view) {
-        quantity = quantity - 1;
+        if (quantity <= 1) {
+            Context context = getApplicationContext();
+            CharSequence text = "You can't order less than one coffee!";
+            int duration = Toast.LENGTH_SHORT;
+            Toast.makeText(context, text, duration).show();
+            return;
+        } else {
+            quantity = quantity - 1;
+        }
         displayQuantity(quantity);
     }
 
