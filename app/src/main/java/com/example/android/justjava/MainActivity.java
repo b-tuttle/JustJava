@@ -2,6 +2,8 @@ package com.example.android.justjava;
 
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -46,20 +48,33 @@ public class MainActivity extends AppCompatActivity {
     /**
      * This method creates an order summary
      *
-     * @param userName name input by user
      * @param price of the order
      * @param hasWhippedCream bool indicating state of whipped cream checkbox
      * @param hasChocolate bool indicating state of chocolate checkbox
      * @return a message with name, needed toppings, quantity ordered, total amount, and a thank you
      */
-    private String createOrderSummary(int price, boolean hasWhippedCream, boolean hasChocolate, String userName) {
-        String priceMessage = "Name: " + userName;
-        priceMessage += "\nAdd whipped cream? " + hasWhippedCream;
-        priceMessage += "\nAdd chocolate? " + hasChocolate;
-        priceMessage += "\nQuantity: " + quantity;
-        priceMessage += "\nTotal= $" + price;
-        priceMessage += "\nThank you!";
-        return priceMessage;
+    private String createOrderSummary(int price, boolean hasWhippedCream, boolean hasChocolate) {
+        String orderSummary = "Add whipped cream? " + hasWhippedCream;
+        orderSummary += "\nAdd chocolate? " + hasChocolate;
+        orderSummary += "\nQuantity: " + quantity;
+        orderSummary += "\nTotal= $" + price;
+        orderSummary += "\nThank you!";
+        return orderSummary;
+    }
+
+    public String createOrdersubject (String userName) {
+        String orderSubject = "Just Java order for " + userName;
+        return orderSubject;
+    }
+
+    public void emailOrder(String subject, String body) {
+        Intent intent = new Intent(Intent.ACTION_SENDTO);
+        intent.setData(Uri.parse("mailto:")); // only email apps should handle this
+        intent.putExtra(Intent.EXTRA_SUBJECT, subject);
+        intent.putExtra(Intent.EXTRA_TEXT, body);
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivity(intent);
+        }
     }
 
     /**
@@ -77,8 +92,9 @@ public class MainActivity extends AppCompatActivity {
         boolean hasChocolate = chocolateCheckBox.isChecked();
 
         int price = calculatePrice(hasWhippedCream, hasChocolate);
-        String priceMessage = createOrderSummary(price, hasWhippedCream, hasChocolate, nameText);
-        displayMessage(priceMessage);
+        String orderSummary = createOrderSummary(price, hasWhippedCream, hasChocolate);
+        String orderSubject = createOrdersubject(nameText);
+        emailOrder(orderSubject, orderSummary);
     }
 
     /**
@@ -119,13 +135,5 @@ public class MainActivity extends AppCompatActivity {
     private void displayQuantity(int numberOfCoffees) {
         TextView quantityTextView = (TextView) findViewById(R.id.quantity_text_view);
         quantityTextView.setText("" + numberOfCoffees);
-    }
-
-    /**
-     * This method displays the given text on the screen.
-     */
-    private void displayMessage(String message) {
-        TextView orderSummaryTextView = (TextView) findViewById(R.id.order_summary_text_view);
-        orderSummaryTextView.setText(message);
     }
 }
