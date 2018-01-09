@@ -53,28 +53,14 @@ public class MainActivity extends AppCompatActivity {
      * @param hasChocolate bool indicating state of chocolate checkbox
      * @return a message with name, needed toppings, quantity ordered, total amount, and a thank you
      */
-    private String createOrderSummary(int price, boolean hasWhippedCream, boolean hasChocolate) {
-        String orderSummary = "Add whipped cream? " + hasWhippedCream;
+    private String createOrderSummary(int price, boolean hasWhippedCream, boolean hasChocolate, String nameText) {
+        String orderSummary = "Order for: " + nameText;
+        orderSummary += "\nAdd whipped cream? " + hasWhippedCream;
         orderSummary += "\nAdd chocolate? " + hasChocolate;
         orderSummary += "\nQuantity: " + quantity;
         orderSummary += "\nTotal= $" + price;
         orderSummary += "\nThank you!";
         return orderSummary;
-    }
-
-    public String createOrdersubject (String userName) {
-        String orderSubject = "Just Java order for " + userName;
-        return orderSubject;
-    }
-
-    public void emailOrder(String subject, String body) {
-        Intent intent = new Intent(Intent.ACTION_SENDTO);
-        intent.setData(Uri.parse("mailto:")); // only email apps should handle this
-        intent.putExtra(Intent.EXTRA_SUBJECT, subject);
-        intent.putExtra(Intent.EXTRA_TEXT, body);
-        if (intent.resolveActivity(getPackageManager()) != null) {
-            startActivity(intent);
-        }
     }
 
     /**
@@ -92,9 +78,16 @@ public class MainActivity extends AppCompatActivity {
         boolean hasChocolate = chocolateCheckBox.isChecked();
 
         int price = calculatePrice(hasWhippedCream, hasChocolate);
-        String orderSummary = createOrderSummary(price, hasWhippedCream, hasChocolate);
-        String orderSubject = createOrdersubject(nameText);
-        emailOrder(orderSubject, orderSummary);
+        String orderSummary = createOrderSummary(price, hasWhippedCream, hasChocolate, nameText);
+
+        Intent intent = new Intent(Intent.ACTION_SENDTO);
+        intent.setData(Uri.parse("mailto:")); // only email apps should handle this
+        intent.putExtra(Intent.EXTRA_SUBJECT, "Just Java order for " + nameText);
+        intent.putExtra(Intent.EXTRA_TEXT, orderSummary);
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivity(intent);
+        }
+
     }
 
     /**
